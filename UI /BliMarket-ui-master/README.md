@@ -402,18 +402,6 @@ curl -X POST "http://localhost:8089/api/v1/cart/merge?guestCartId=guest-cart-id"
 - Prevents stacking (removes existing toasts)
 - Smooth animations
 
-## 📝 TODO / Future Enhancements
-
-- [ ] Order history implementation
-- [ ] Wishlist functionality
-- [ ] Address management
-- [ ] Password change flow
-- [ ] Two-factor authentication
-- [ ] Product reviews and ratings
-- [ ] Checkout process
-- [ ] Payment integration
-- [ ] Email notifications
-- [ ] Dark mode support
 
 ## 📄 License
 
