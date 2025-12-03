@@ -1,0 +1,294 @@
+{{> header}}
+{{> navbar}}
+
+<main class="auth-page">
+    <div class="container">
+        <div class="auth-container">
+            <div class="auth-card">
+                <div class="auth-header">
+                    <h1 class="auth-title">Create Account</h1>
+                    <p class="auth-subtitle">Join BliMarket and start shopping today</p>
+                </div>
+
+                {{#if error}}
+                <div class="alert alert-error">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span>{{error}}</span>
+                </div>
+                {{/if}}
+
+                <form class="auth-form" id="registerForm">
+                    <div class="form-group">
+                        <label for="name" class="form-label">
+                            <i class="fas fa-user"></i>
+                            Full Name
+                        </label>
+                        <input 
+                            type="text" 
+                            id="name" 
+                            name="name" 
+                            class="form-input" 
+                            placeholder="Enter your full name"
+                            minlength="2"
+                            maxlength="255"
+                            required
+                        >
+                        <span class="form-error" id="nameError"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email" class="form-label">
+                            <i class="fas fa-envelope"></i>
+                            Email Address
+                        </label>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            name="email" 
+                            class="form-input" 
+                            placeholder="Enter your email"
+                            required
+                        >
+                        <span class="form-error" id="emailError"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password" class="form-label">
+                            <i class="fas fa-lock"></i>
+                            Password
+                        </label>
+                        <div class="password-input-wrapper">
+                            <input 
+                                type="password" 
+                                id="password" 
+                                name="password" 
+                                class="form-input" 
+                                placeholder="Create a strong password"
+                                minlength="10"
+                                required
+                            >
+                            <button type="button" class="password-toggle" id="togglePassword">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <span class="form-error" id="passwordError"></span>
+                        <div class="password-requirements">
+                            <p class="requirements-title">Password must contain:</p>
+                            <ul class="requirements-list">
+                                <li id="req-length"><i class="fas fa-circle"></i> At least 10 characters</li>
+                                <li id="req-uppercase"><i class="fas fa-circle"></i> One uppercase letter</li>
+                                <li id="req-lowercase"><i class="fas fa-circle"></i> One lowercase letter</li>
+                                <li id="req-digit"><i class="fas fa-circle"></i> One number</li>
+                                <li id="req-special"><i class="fas fa-circle"></i> One special character (@$!%*?&)</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="terms" id="terms" required>
+                            <span>I agree to the <a href="#" class="link">Terms of Service</a> and <a href="#" class="link">Privacy Policy</a></span>
+                        </label>
+                        <span class="form-error" id="termsError"></span>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block" id="registerBtn">
+                        <i class="fas fa-user-plus"></i>
+                        Create Account
+                    </button>
+
+                    <div class="auth-divider">
+                        <span>or</span>
+                    </div>
+
+                    <div class="auth-footer">
+                        <p>Already have an account? <a href="/login" class="link">Sign In</a></p>
+                    </div>
+                </form>
+            </div>
+
+            <div class="auth-features">
+                <h2>Member Benefits</h2>
+                <div class="feature-list">
+                    <div class="feature-item">
+                        <i class="fas fa-tag"></i>
+                        <div>
+                            <h3>Exclusive Deals</h3>
+                            <p>Access to member-only discounts and promotions</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-heart"></i>
+                        <div>
+                            <h3>Wishlist</h3>
+                            <p>Save your favorite items for later</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-history"></i>
+                        <div>
+                            <h3>Order Tracking</h3>
+                            <p>Track all your orders in one place</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-bell"></i>
+                        <div>
+                            <h3>Notifications</h3>
+                            <p>Get alerts on restocks and price drops</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('registerForm');
+    const registerBtn = document.getElementById('registerBtn');
+    const passwordInput = document.getElementById('password');
+    const togglePassword = document.getElementById('togglePassword');
+
+    // Password requirements validation
+    const requirements = {
+        length: { regex: /.{10,}/, element: document.getElementById('req-length') },
+        uppercase: { regex: /[A-Z]/, element: document.getElementById('req-uppercase') },
+        lowercase: { regex: /[a-z]/, element: document.getElementById('req-lowercase') },
+        digit: { regex: /\d/, element: document.getElementById('req-digit') },
+        special: { regex: /[@$!%*?&]/, element: document.getElementById('req-special') }
+    };
+
+    passwordInput?.addEventListener('input', () => {
+        const password = passwordInput.value;
+        Object.values(requirements).forEach(({ regex, element }) => {
+            if (regex.test(password)) {
+                element.classList.add('met');
+            } else {
+                element.classList.remove('met');
+            }
+        });
+    });
+
+    // Toggle password visibility
+    togglePassword?.addEventListener('click', () => {
+        const type = passwordInput.type === 'password' ? 'text' : 'password';
+        passwordInput.type = type;
+        const icon = togglePassword.querySelector('i');
+        icon.classList.toggle('fa-eye');
+        icon.classList.toggle('fa-eye-slash');
+    });
+
+    // Form submission
+    form?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        // Clear previous errors
+        document.querySelectorAll('.form-error').forEach(el => el.textContent = '');
+        document.querySelectorAll('.form-input').forEach(el => el.classList.remove('error'));
+
+        const name = document.getElementById('name').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const password = passwordInput.value;
+        const terms = document.getElementById('terms').checked;
+
+        // Validation
+        let hasError = false;
+
+        if (!name || name.length < 2) {
+            showError('name', 'Name must be at least 2 characters');
+            hasError = true;
+        }
+
+        if (!email) {
+            showError('email', 'Email is required');
+            hasError = true;
+        }
+
+        if (!password) {
+            showError('password', 'Password is required');
+            hasError = true;
+        } else if (!validatePassword(password)) {
+            showError('password', 'Password does not meet requirements');
+            hasError = true;
+        }
+
+        if (!terms) {
+            showError('terms', 'You must agree to the terms');
+            hasError = true;
+        }
+
+        if (hasError) return;
+
+        // Disable button and show loading
+        registerBtn.disabled = true;
+        registerBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating Account...';
+
+        try {
+            const response = await fetch('/api/auth/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email, password })
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.success) {
+                // Success - show message and redirect to login
+                showAlert('Account created successfully! Redirecting to login...', 'success');
+                setTimeout(() => {
+                    window.location.href = '/login';
+                }, 2000);
+            } else {
+                // Error response
+                const message = data.message || 'Registration failed. Please try again.';
+                showAlert(message, 'error');
+                registerBtn.disabled = false;
+                registerBtn.innerHTML = '<i class="fas fa-user-plus"></i> Create Account';
+            }
+        } catch (error) {
+            console.error('Registration error:', error);
+            showAlert('An error occurred. Please try again later.', 'error');
+            registerBtn.disabled = false;
+            registerBtn.innerHTML = '<i class="fas fa-user-plus"></i> Create Account';
+        }
+    });
+
+    function validatePassword(password) {
+        return Object.values(requirements).every(({ regex }) => regex.test(password));
+    }
+
+    function showError(fieldId, message) {
+        const input = document.getElementById(fieldId);
+        const errorEl = document.getElementById(fieldId + 'Error');
+        if (input) input.classList.add('error');
+        if (errorEl) errorEl.textContent = message;
+    }
+
+    function showAlert(message, type = 'error') {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${type}`;
+        alertDiv.innerHTML = `
+            <i class="fas fa-${type === 'error' ? 'exclamation-circle' : 'check-circle'}"></i>
+            <span>${message}</span>
+        `;
+        
+        const existingAlert = document.querySelector('.alert');
+        if (existingAlert) {
+            existingAlert.remove();
+        }
+        
+        const form = document.getElementById('registerForm');
+        form.parentElement.insertBefore(alertDiv, form);
+        
+        // Auto-remove after 5 seconds (unless success message)
+        if (type !== 'success') {
+            setTimeout(() => alertDiv.remove(), 5000);
+        }
+    }
+});
+</script>
+
+{{> footer}}
+

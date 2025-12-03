@@ -1,0 +1,122 @@
+// Footer Component Styles
+
+.footer {
+    margin-top: auto;
+    background: $bg-dark;
+    color: $text-light;
+    padding: 3rem 0 1.5rem;
+}
+
+.footer-content {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    margin-bottom: 2rem;
+
+    @include respond-to('sm') {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    @include respond-to('md') {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+.footer-section {
+    &:first-child {
+        @include respond-to('md') {
+            grid-column: span 2;
+        }
+    }
+}
+
+.footer-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: $text-white;
+
+    i {
+        color: $primary-color;
+    }
+}
+
+.footer-subtitle {
+    margin-bottom: 1rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: $text-white;
+}
+
+.footer-description {
+    margin-bottom: 1.5rem;
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: $text-light;
+    max-width: 400px;
+}
+
+.social-links {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.social-link {
+    @include flex-center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    color: $text-white;
+    transition: $transition-fast;
+
+    &:hover {
+        background: $primary-color;
+        color: $text-white;
+        transform: translateY(-2px);
+    }
+}
+
+.footer-links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    li {
+        margin-bottom: 0.75rem;
+    }
+
+    a {
+        color: $text-light;
+        font-size: 0.875rem;
+        transition: $transition-fast;
+
+        &:hover {
+            color: $primary-color;
+            padding-left: 0.25rem;
+        }
+    }
+}
+
+.footer-bottom {
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
+}
+
+.copyright {
+    font-size: 0.875rem;
+    color: $text-light;
+
+    a {
+        color: $text-light;
+        text-decoration: underline;
+
+        &:hover {
+            color: $primary-color;
+        }
+    }
+}

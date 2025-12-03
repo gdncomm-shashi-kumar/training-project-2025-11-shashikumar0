@@ -1,0 +1,397 @@
+{{> header}}
+{{> navbar}}
+
+<main class="product-detail-page">
+    <div class="container">
+        {{#if product}}
+        <div class="breadcrumb">
+            <a href="/">Home</a>
+            <i class="fas fa-chevron-right"></i>
+            <a href="/?category={{product.category}}">{{product.category}}</a>
+            <i class="fas fa-chevron-right"></i>
+            <span>{{product.name}}</span>
+        </div>
+
+        <div class="product-detail">
+            <div class="product-gallery">
+                <div class="main-image">
+                    <img id="mainImage" src="https://picsum.photos/seed/{{product.productId}}/600/600" alt="{{product.name}}" onerror="this.src='https://picsum.photos/600/600?random={{product.id}}'">
+                </div>
+                <div class="thumbnail-images">
+                    <img class="thumbnail active" src="https://picsum.photos/seed/{{product.productId}}1/100/100" alt="View 1" onclick="changeImage('https://picsum.photos/seed/{{product.productId}}1/600/600')" onerror="this.src='https://picsum.photos/100/100?random=1'">
+                    <img class="thumbnail" src="https://picsum.photos/seed/{{product.productId}}2/100/100" alt="View 2" onclick="changeImage('https://picsum.photos/seed/{{product.productId}}2/600/600')" onerror="this.src='https://picsum.photos/100/100?random=2'">
+                    <img class="thumbnail" src="https://picsum.photos/seed/{{product.productId}}3/100/100" alt="View 3" onclick="changeImage('https://picsum.photos/seed/{{product.productId}}3/600/600')" onerror="this.src='https://picsum.photos/100/100?random=3'">
+                    <img class="thumbnail" src="https://picsum.photos/seed/{{product.productId}}4/100/100" alt="View 4" onclick="changeImage('https://picsum.photos/seed/{{product.productId}}4/600/600')" onerror="this.src='https://picsum.photos/100/100?random=4'">
+                </div>
+            </div>
+
+            <div class="product-info">
+                <div class="product-header">
+                    <div>
+                        <span class="product-category">{{product.category}}</span>
+                        {{#if product.brand}}
+                        <span class="product-brand">{{product.brand}}</span>
+                        {{/if}}
+                    </div>
+                    <h1 class="product-name">{{product.name}}</h1>
+                    <p class="product-description">{{product.description}}</p>
+                </div>
+
+                {{#if product.tags}}
+                <div class="product-tags">
+                    {{#each product.tags}}
+                    <span class="tag">{{this}}</span>
+                    {{/each}}
+                </div>
+                {{/if}}
+
+                <div class="product-price-section">
+                    <div class="price-display">
+                        <span class="current-price" id="variantPrice">
+                            {{currency product.variants.[0].price}}
+                        </span>
+                    </div>
+                    <div class="stock-status" id="stockStatus">
+                        {{#if product.variants.[0].stock}}
+                            {{#if (eq product.variants.[0].stock 0)}}
+                                <i class="fas fa-times-circle text-danger"></i>
+                                <span class="text-danger">Out of Stock</span>
+                            {{else}}
+                                <i class="fas fa-check-circle text-success"></i>
+                                <span class="text-success">In Stock ({{product.variants.[0].stock}} available)</span>
+                            {{/if}}
+                        {{else}}
+                            <i class="fas fa-check-circle text-success"></i>
+                            <span class="text-success">In Stock</span>
+                        {{/if}}
+                    </div>
+                </div>
+
+                <form class="product-options-form" id="addToCartForm">
+                    <input type="hidden" id="selectedSku" value="{{product.variants.[0].sku}}">
+                    <input type="hidden" id="selectedPrice" value="{{product.variants.[0].price}}">
+                    <input type="hidden" id="selectedStock" value="{{product.variants.[0].stock}}">
+
+                    {{#if product.variants}}
+                        <!-- Color Selection -->
+                        {{#if product.variants.[0].color}}
+                        <div class="option-group">
+                            <label class="option-label">
+                                Color: <span class="selected-value" id="selectedColorLabel">{{product.variants.[0].color}}</span>
+                            </label>
+                            <div class="color-options">
+                                {{#each product.variants}}
+                                <button 
+                                    type="button" 
+                                    class="color-option {{#if @first}}active{{/if}}" 
+                                    data-sku="{{this.sku}}"
+                                    data-color="{{this.color}}"
+                                    data-size="{{this.size}}"
+                                    data-price="{{this.price}}"
+                                    data-stock="{{this.stock}}"
+                                    title="{{this.color}}"
+                                >
+                                    {{this.color}}
+                                </button>
+                                {{/each}}
+                            </div>
+                        </div>
+                        {{/if}}
+
+                        <!-- Size Selection -->
+                        {{#if product.variants.[0].size}}
+                        <div class="option-group">
+                            <label class="option-label">
+                                Size: <span class="selected-value" id="selectedSizeLabel">{{product.variants.[0].size}}</span>
+                            </label>
+                            <div class="size-options">
+                                {{#each product.variants}}
+                                <button 
+                                    type="button" 
+                                    class="size-option {{#if @first}}active{{/if}}" 
+                                    data-sku="{{this.sku}}"
+                                    data-color="{{this.color}}"
+                                    data-size="{{this.size}}"
+                                    data-price="{{this.price}}"
+                                    data-stock="{{this.stock}}"
+                                >
+                                    {{this.size}}
+                                </button>
+                                {{/each}}
+                            </div>
+                        </div>
+                        {{/if}}
+                    {{/if}}
+
+                    <!-- Quantity -->
+                    <div class="option-group">
+                        <label class="option-label" for="quantity">Quantity:</label>
+                        <div class="quantity-selector">
+                            <button type="button" class="qty-btn" id="decreaseQty">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                            <input type="number" id="quantity" name="quantity" value="1" min="1" max="{{product.variants.[0].stock}}" class="qty-input">
+                            <button type="button" class="qty-btn" id="increaseQty">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Add to Cart Button -->
+                    <div class="product-actions">
+                        <button type="submit" class="btn btn-primary btn-lg btn-block" id="addToCartBtn">
+                            <i class="fas fa-shopping-cart"></i>
+                            Add to Cart
+                        </button>
+                        <button type="button" class="btn btn-outline btn-lg btn-icon">
+                            <i class="far fa-heart"></i>
+                        </button>
+                        {{#unless isAuthenticated}}
+                        <p class="guest-cart-note">
+                            <i class="fas fa-info-circle"></i>
+                            You can add items as a guest. <a href="#" onclick="openModal('loginModal'); return false;" class="link">Login</a> to save your cart.
+                        </p>
+                        {{/unless}}
+                    </div>
+                </form>
+
+                <!-- Product Details -->
+                <div class="product-features">
+                    <h3 class="features-title">Product Details</h3>
+                    <ul class="features-list">
+                        <li><i class="fas fa-check"></i> Authentic and high-quality product</li>
+                        <li><i class="fas fa-check"></i> Fast and secure delivery</li>
+                        <li><i class="fas fa-check"></i> 30-day return policy</li>
+                        <li><i class="fas fa-check"></i> 1-year warranty included</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Additional Information Tabs -->
+        <div class="product-tabs">
+            <div class="tabs-header">
+                <button class="tab-btn active" data-tab="description">Description</button>
+                <button class="tab-btn" data-tab="specifications">Specifications</button>
+                <button class="tab-btn" data-tab="reviews">Reviews</button>
+            </div>
+            <div class="tabs-content">
+                <div class="tab-pane active" id="description">
+                    <h3>Product Description</h3>
+                    <p>{{product.description}}</p>
+                    <p>Experience premium quality with {{product.name}}. This product combines innovative design with exceptional functionality, making it perfect for your needs.</p>
+                </div>
+                <div class="tab-pane" id="specifications">
+                    <h3>Specifications</h3>
+                    <table class="specs-table">
+                        <tr>
+                            <td><strong>Product ID:</strong></td>
+                            <td>{{product.productId}}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Category:</strong></td>
+                            <td>{{product.category}}</td>
+                        </tr>
+                        {{#if product.brand}}
+                        <tr>
+                            <td><strong>Brand:</strong></td>
+                            <td>{{product.brand}}</td>
+                        </tr>
+                        {{/if}}
+                        <tr>
+                            <td><strong>Available Variants:</strong></td>
+                            <td>{{product.variants.length}}</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="tab-pane" id="reviews">
+                    <h3>Customer Reviews</h3>
+                    <div class="reviews-placeholder">
+                        <i class="fas fa-star"></i>
+                        <p>No reviews yet. Be the first to review this product!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{else}}
+        <div class="empty-state">
+            <i class="fas fa-exclamation-circle"></i>
+            <h2>Product Not Found</h2>
+            <p>The product you are looking for does not exist.</p>
+            <a href="/" class="btn btn-primary">Back to Shop</a>
+        </div>
+        {{/if}}
+    </div>
+</main>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('addToCartForm');
+    const qtyInput = document.getElementById('quantity');
+    const decreaseBtn = document.getElementById('decreaseQty');
+    const increaseBtn = document.getElementById('increaseQty');
+    const addToCartBtn = document.getElementById('addToCartBtn');
+
+    // Image gallery
+    window.changeImage = function(src) {
+        document.getElementById('mainImage').src = src;
+        document.querySelectorAll('.thumbnail').forEach(t => t.classList.remove('active'));
+        event.target.classList.add('active');
+    };
+
+    // Quantity controls
+    decreaseBtn?.addEventListener('click', () => {
+        const currentQty = parseInt(qtyInput.value);
+        if (currentQty > 1) {
+            qtyInput.value = currentQty - 1;
+        }
+    });
+
+    increaseBtn?.addEventListener('click', () => {
+        const currentQty = parseInt(qtyInput.value);
+        const maxQty = parseInt(qtyInput.max);
+        if (currentQty < maxQty) {
+            qtyInput.value = currentQty + 1;
+        }
+    });
+
+    // Variant selection
+    document.querySelectorAll('.color-option, .size-option').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const siblings = this.parentElement.querySelectorAll('button');
+            siblings.forEach(s => s.classList.remove('active'));
+            this.classList.add('active');
+
+            // Update selected variant
+            const sku = this.dataset.sku;
+            const price = this.dataset.price;
+            const stock = this.dataset.stock;
+            const color = this.dataset.color;
+            const size = this.dataset.size;
+
+            document.getElementById('selectedSku').value = sku;
+            document.getElementById('selectedPrice').value = price;
+            document.getElementById('selectedStock').value = stock;
+            document.getElementById('variantPrice').textContent = '$' + parseFloat(price).toFixed(2);
+            qtyInput.max = stock;
+            qtyInput.value = Math.min(parseInt(qtyInput.value), stock);
+
+            // Update labels
+            if (color && document.getElementById('selectedColorLabel')) {
+                document.getElementById('selectedColorLabel').textContent = color;
+            }
+            if (size && document.getElementById('selectedSizeLabel')) {
+                document.getElementById('selectedSizeLabel').textContent = size;
+            }
+
+            // Update stock status
+            const stockStatus = document.getElementById('stockStatus');
+            if (stock > 0) {
+                stockStatus.innerHTML = `
+                    <i class="fas fa-check-circle text-success"></i>
+                    <span class="text-success">In Stock (${stock} available)</span>
+                `;
+            } else {
+                stockStatus.innerHTML = `
+                    <i class="fas fa-times-circle text-danger"></i>
+                    <span class="text-danger">Out of Stock</span>
+                `;
+            }
+        });
+    });
+
+    // Tabs
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const tab = this.dataset.tab;
+            
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+            
+            this.classList.add('active');
+            document.getElementById(tab).classList.add('active');
+        });
+    });
+
+    // Add to cart
+    form?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const sku = document.getElementById('selectedSku').value;
+        const qty = parseInt(qtyInput.value);
+        const stock = parseInt(document.getElementById('selectedStock').value);
+
+        if (stock === 0) {
+            showNotification('This variant is out of stock', 'error');
+            return;
+        }
+
+        if (qty > stock) {
+            showNotification(`Only ${stock} items available in stock`, 'error');
+            return;
+        }
+
+        addToCartBtn.disabled = true;
+        addToCartBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding...';
+
+        try {
+            const response = await fetch('/api/v1/cart', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ sku, qty })
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.success) {
+                showNotification('Item added to cart!', 'success');
+                updateCartBadge();
+                qtyInput.value = 1;
+            } else {
+                showNotification(data.message || 'Failed to add item to cart', 'error');
+            }
+        } catch (error) {
+            console.error('Add to cart error:', error);
+            showNotification('An error occurred. Please try again.', 'error');
+        } finally {
+            addToCartBtn.disabled = false;
+            addToCartBtn.innerHTML = '<i class="fas fa-shopping-cart"></i> Add to Cart';
+        }
+    });
+
+    function updateCartBadge() {
+        fetch('/api/v1/cart', { credentials: 'include' })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success && data.data) {
+                    const badge = document.getElementById('cartBadge');
+                    if (badge && data.data.totalItems > 0) {
+                        badge.textContent = data.data.totalItems;
+                        badge.style.display = 'flex';
+                    }
+                }
+            })
+            .catch(err => console.error('Error updating cart badge:', err));
+    }
+
+    function showNotification(message, type = 'success') {
+        const notification = document.createElement('div');
+        notification.className = `notification notification-${type}`;
+        notification.innerHTML = `
+            <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+            <span>${message}</span>
+        `;
+        document.body.appendChild(notification);
+        
+        setTimeout(() => notification.classList.add('show'), 10);
+        setTimeout(() => {
+            notification.classList.remove('show');
+            setTimeout(() => notification.remove(), 300);
+        }, 3000);
+    }
+});
+</script>
+
+{{> footer}}
+

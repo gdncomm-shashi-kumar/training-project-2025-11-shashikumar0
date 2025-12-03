@@ -1,0 +1,28 @@
+{
+  "name": "blimarket-ui",
+  "version": "1.0.0",
+  "description": "Modern E-Commerce UI for BliMarket - Product catalog, cart, and member management",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/diogocapela/dummy-ui.git"
+  },
+  "author": "GDN Team",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/diogocapela/dummy-ui/issues"
+  },
+  "homepage": "https://github.com/diogocapela/dummy-ui#readme",
+  "dependencies": {
+    "express": "^4.16.3",
+    "hbs": "^4.0.1",
+    "morgan": "^1.9.0",
+    "cookie-parser": "^1.4.6",
+    "axios": "^1.6.2",
+    "body-parser": "^1.20.2"
+  }
+}

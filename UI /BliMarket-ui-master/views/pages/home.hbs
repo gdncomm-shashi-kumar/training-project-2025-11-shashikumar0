@@ -1,0 +1,269 @@
+{{> header}}
+{{> navbar}}
+
+<main class="catalog-page">
+    <div class="container">
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="hero-content">
+                <h1 class="hero-title">Shop Smart, Live Better</h1>
+                <p class="hero-subtitle">Discover amazing products at unbeatable prices</p>
+            </div>
+        </section>
+
+        {{#if error}}
+        <div class="alert alert-error">
+            <i class="fas fa-exclamation-circle"></i>
+            <span>{{error}}</span>
+        </div>
+        {{/if}}
+
+        <!-- Filters and Sort -->
+        <div class="catalog-controls">
+            <div class="catalog-filters">
+                <button class="filter-btn" id="filterBtn">
+                    <i class="fas fa-filter"></i>
+                    Filters
+                </button>
+                
+                <div class="category-tabs">
+                    <a href="/" class="category-tab {{#unless search.category}}active{{/unless}}">
+                        All Products
+                    </a>
+                    <a href="/?category=Electronics" class="category-tab {{#eq search.category 'Electronics'}}active{{/eq}}">
+                        Electronics
+                    </a>
+                    <a href="/?category=Fashion" class="category-tab {{#eq search.category 'Fashion'}}active{{/eq}}">
+                        Fashion
+                    </a>
+                    <a href="/?category=Home" class="category-tab {{#eq search.category 'Home'}}active{{/eq}}">
+                        Home & Living
+                    </a>
+                    <a href="/?category=Sports" class="category-tab {{#eq search.category 'Sports'}}active{{/eq}}">
+                        Sports
+                    </a>
+                </div>
+            </div>
+
+            <div class="catalog-sort">
+                <label for="sortSelect" class="sort-label">
+                    <i class="fas fa-sort"></i>
+                    Sort by:
+                </label>
+                <select id="sortSelect" class="sort-select">
+                    <option value="name,asc" {{#eq search.sort 'name,asc'}}selected{{/eq}}>Name (A-Z)</option>
+                    <option value="name,desc" {{#eq search.sort 'name,desc'}}selected{{/eq}}>Name (Z-A)</option>
+                    <option value="price,asc" {{#eq search.sort 'price,asc'}}selected{{/eq}}>Price (Low to High)</option>
+                    <option value="price,desc" {{#eq search.sort 'price,desc'}}selected{{/eq}}>Price (High to Low)</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Products Grid -->
+        {{#if hasProducts}}
+            <div class="products-grid">
+                {{#each products}}
+                <div class="product-card" data-product-id="{{this.productId}}" data-product-url="/product/{{this.id}}">
+                    <div class="product-image">
+                        <img src="https://picsum.photos/seed/{{this.productId}}/300/300" alt="{{this.name}}" onerror="this.src='https://picsum.photos/300/300?random={{@index}}'">
+                        {{#if this.variants.[0].stock}}
+                            {{#if (eq this.variants.[0].stock 0)}}
+                                <span class="product-badge badge-out-of-stock">Out of Stock</span>
+                            {{/if}}
+                        {{/if}}
+                    </div>
+                    <div class="product-content">
+                        <div class="product-category">{{this.category}}</div>
+                        <h3 class="product-title">
+                            <a href="/product/{{this.id}}">{{this.name}}</a>
+                        </h3>
+                        <p class="product-description">{{this.description}}</p>
+                        
+                        <div class="product-variants-price">
+                            {{#if this.variants}}
+                                <div class="product-variants">
+                                    {{#if this.variants.[0].color}}
+                                        <span class="variant-info">
+                                            <i class="fas fa-palette"></i>
+                                            {{this.variants.length}} colors
+                                        </span>
+                                    {{/if}}
+                                    {{#if this.variants.[0].size}}
+                                        <span class="variant-info">
+                                            <i class="fas fa-ruler"></i>
+                                            {{this.variants.length}} sizes
+                                        </span>
+                                    {{/if}}
+                                </div>
+                                <div class="product-price">
+                                    {{currency this.variants.[0].price}}
+                                </div>
+                            {{/if}}
+                        </div>
+                        
+                        <div class="product-actions">
+                            <button class="btn-add-to-cart btn-sm" data-product-id="{{this.id}}" data-sku="{{this.variants.[0].sku}}" data-price="{{this.variants.[0].price}}" data-name="{{this.name}}">
+                                <i class="fas fa-shopping-cart"></i> Add to Cart
+                            </button>
+                            <a href="/product/{{this.id}}" class="btn btn-primary btn-sm" onclick="event.stopPropagation();">
+                                View Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {{/each}}
+            </div>
+
+            <!-- Pagination -->
+            {{#if pagination}}
+            <div class="pagination">
+                <div class="pagination-controls">
+                    {{#if (eq pagination.currentPage 0)}}
+                        <button class="pagination-btn" disabled>
+                            <i class="fas fa-chevron-left"></i>
+                            Previous
+                        </button>
+                    {{else}}
+                        <a href="/?page={{math pagination.currentPage '-' 1}}{{#if search.name}}&name={{search.name}}{{/if}}{{#if search.category}}&category={{search.category}}{{/if}}&sort={{search.sort}}" class="pagination-btn">
+                            <i class="fas fa-chevron-left"></i>
+                            Previous
+                        </a>
+                    {{/if}}
+
+                    <div class="pagination-pages">
+                        Page {{math pagination.currentPage '+' 1}} of {{pagination.totalPages}}
+                    </div>
+
+                    {{#if (eq pagination.currentPage (math pagination.totalPages '-' 1))}}
+                        <button class="pagination-btn" disabled>
+                            Next
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    {{else}}
+                        <a href="/?page={{math pagination.currentPage '+' 1}}{{#if search.name}}&name={{search.name}}{{/if}}{{#if search.category}}&category={{search.category}}{{/if}}&sort={{search.sort}}" class="pagination-btn">
+                            Next
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    {{/if}}
+                </div>
+            </div>
+            {{/if}}
+        {{else}}
+            <div class="empty-state">
+                <i class="fas fa-box-open"></i>
+                <h2>No Products Found</h2>
+                <p>We couldn't find any products matching your search{{#if search.name}} for "{{search.name}}"{{/if}}.</p>
+                <a href="/" class="btn btn-primary">View All Products</a>
+            </div>
+        {{/if}}
+    </div>
+</main>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const sortSelect = document.getElementById('sortSelect');
+    
+    // Handle sort change
+    sortSelect?.addEventListener('change', (e) => {
+        const url = new URL(window.location);
+        url.searchParams.set('sort', e.target.value);
+        url.searchParams.set('page', '0'); // Reset to first page
+        window.location.href = url.toString();
+    });
+    
+    // Make entire product card clickable
+    const productCards = document.querySelectorAll('.product-card');
+    productCards.forEach(card => {
+        card.style.cursor = 'pointer';
+        card.addEventListener('click', (e) => {
+            // Don't navigate if clicking on buttons or links
+            if (e.target.closest('.btn-add-to-cart') || e.target.closest('.btn-primary') || e.target.closest('a')) {
+                return;
+            }
+            const productUrl = card.getAttribute('data-product-url');
+            if (productUrl) {
+                window.location.href = productUrl;
+            }
+        });
+    });
+    
+    // Handle Add to Cart buttons
+    const addToCartButtons = document.querySelectorAll('.btn-add-to-cart');
+    addToCartButtons.forEach(button => {
+        button.addEventListener('click', async (e) => {
+            e.preventDefault();
+            e.stopPropagation(); // Prevent card click
+            const button = e.currentTarget;
+            const sku = button.getAttribute('data-sku');
+            const productId = button.getAttribute('data-product-id');
+            const price = button.getAttribute('data-price');
+            const name = button.getAttribute('data-name');
+            
+            if (!sku) {
+                if (window.showToast) {
+                    window.showToast('Please select a variant first', 'error');
+                }
+                return;
+            }
+            
+            // Disable button during request
+            button.disabled = true;
+            const originalText = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Adding...';
+            
+            try {
+                const response = await fetch('/api/cart', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        sku: sku,
+                        qty: 1
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.success !== false) {
+                    if (window.showToast) {
+                        window.showToast(`${name} added to cart!`, 'success');
+                    }
+                    // Update cart count
+                    updateCartCount();
+                } else {
+                    if (window.showToast) {
+                        window.showToast(data.message || 'Failed to add item to cart', 'error');
+                    }
+                }
+            } catch (error) {
+                console.error('Add to cart error:', error);
+                if (window.showToast) {
+                    window.showToast('Failed to add item to cart. Please try again.', 'error');
+                }
+            } finally {
+                button.disabled = false;
+                button.innerHTML = originalText;
+            }
+        });
+    });
+    
+    // Update cart count function
+    async function updateCartCount() {
+        try {
+            const response = await fetch('/cart-count');
+            const data = await response.json();
+            const cartBadge = document.querySelector('.cart-count');
+            if (cartBadge) {
+                cartBadge.textContent = data.count || 0;
+                cartBadge.style.display = data.count > 0 ? 'block' : 'none';
+            }
+        } catch (error) {
+            console.error('Failed to update cart count:', error);
+        }
+    }
+    
+});
+</script>
+
+{{> footer}}

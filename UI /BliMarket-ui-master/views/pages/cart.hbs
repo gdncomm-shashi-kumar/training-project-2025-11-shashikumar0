@@ -1,0 +1,333 @@
+{{> header}}
+{{> navbar}}
+
+<main class="cart-page">
+    <div class="container">
+        <div class="page-header">
+            <h1 class="page-title">
+                <i class="fas fa-shopping-cart"></i>
+                Shopping Cart
+            </h1>
+        </div>
+
+        {{#if error}}
+        <div class="alert alert-error">
+            <i class="fas fa-exclamation-circle"></i>
+            <span>{{error}}</span>
+        </div>
+        {{/if}}
+
+        {{#if requiresLogin}}
+        {{#if cart.items.length}}
+        <div class="guest-cart-notice">
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i>
+                <div>
+                    <strong>Guest Cart</strong>
+                    <p>You have {{cart.totalItems}} item(s) in your cart. Please login to save your cart and proceed to checkout.</p>
+                </div>
+            </div>
+            <div class="login-prompt-actions">
+                <button class="btn btn-primary btn-lg" onclick="openModal('loginModal')">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Login to Continue
+                </button>
+                <p class="login-prompt-footer">
+                    Don't have an account? 
+                    <a href="#" onclick="openModal('registerModal'); return false;" class="link">Sign Up</a>
+                </p>
+            </div>
+        </div>
+        {{else}}
+        <div class="login-prompt">
+            <div class="login-prompt-card">
+                <i class="fas fa-lock"></i>
+                <h2>Login Required</h2>
+                <p>Please login to view and manage your cart items.</p>
+                <button class="btn btn-primary btn-lg" onclick="openModal('loginModal')">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Login Now
+                </button>
+                <p class="login-prompt-footer">
+                    Don't have an account? 
+                    <a href="#" onclick="openModal('registerModal'); return false;" class="link">Sign Up</a>
+                </p>
+            </div>
+        </div>
+        {{/if}}
+        {{/if}}
+
+        {{#if cart}}
+            {{#if cart.items.length}}
+            <div class="cart-layout">
+                <div class="cart-items">
+                    {{#each cart.items}}
+                    <div class="cart-item" data-sku="{{this.sku}}">
+                        <div class="item-image">
+                            <a href="/product/{{this.productId}}" title="View product details">
+                                <img src="https://picsum.photos/seed/{{this.sku}}/120/120" alt="{{this.name}}" onerror="this.src='https://picsum.photos/120/120?random={{@index}}'">
+                            </a>
+                        </div>
+                        <div class="item-details">
+                            <h3 class="item-name">{{this.name}}</h3>
+                            <p class="item-sku">SKU: {{this.sku}}</p>
+                            {{#if this.variant}}
+                            <div class="item-variants">
+                                {{#if this.variant.color}}
+                                <span class="variant-tag">
+                                    <i class="fas fa-palette"></i> {{this.variant.color}}
+                                </span>
+                                {{/if}}
+                                {{#if this.variant.size}}
+                                <span class="variant-tag">
+                                    <i class="fas fa-ruler"></i> {{this.variant.size}}
+                                </span>
+                                {{/if}}
+                            </div>
+                            {{/if}}
+                        </div>
+                        <div class="item-price">
+                            <span class="price-label">Price:</span>
+                            <span class="price-value">{{currency this.price}}</span>
+                        </div>
+                        <div class="item-quantity">
+                            <span class="qty-label">Quantity:</span>
+                            <div class="quantity-selector">
+                                <button type="button" class="qty-btn decrease-qty" data-sku="{{this.sku}}">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <input type="number" class="qty-input" value="{{this.qty}}" min="1" readonly data-sku="{{this.sku}}">
+                                <button type="button" class="qty-btn increase-qty" data-sku="{{this.sku}}">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="item-total">
+                            <span class="total-label">Total:</span>
+                            <span class="total-value">{{currency (multiply this.price this.qty)}}</span>
+                        </div>
+                        <div class="item-actions">
+                            <button type="button" class="btn-remove" data-sku="{{this.sku}}" title="Remove item">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </div>
+                    </div>
+                    {{/each}}
+                </div>
+
+                <div class="cart-summary">
+                    <div class="summary-card">
+                        <h2 class="summary-title">Order Summary</h2>
+                        
+                        <div class="summary-row">
+                            <span class="summary-label">Items ({{cart.totalItems}}):</span>
+                            <span class="summary-value">{{currency cart.totalValue}}</span>
+                        </div>
+                        
+                        <div class="summary-row">
+                            <span class="summary-label">Shipping:</span>
+                            <span class="summary-value free">FREE</span>
+                        </div>
+                        
+                        <div class="summary-row">
+                            <span class="summary-label">Tax:</span>
+                            <span class="summary-value">$0.00</span>
+                        </div>
+                        
+                        <div class="summary-divider"></div>
+                        
+                        <div class="summary-row summary-total">
+                            <span class="summary-label">Total:</span>
+                            <span class="summary-value">{{currency cart.totalValue}}</span>
+                        </div>
+
+                        <div class="summary-actions">
+                            <button class="btn btn-primary btn-block btn-lg" id="checkoutBtn">
+                                <i class="fas fa-credit-card"></i>
+                                Proceed to Checkout
+                            </button>
+                            <a href="/" class="btn btn-outline btn-block">
+                                <i class="fas fa-arrow-left"></i>
+                                Continue Shopping
+                            </a>
+                            <button class="btn btn-text btn-block" id="clearCartBtn">
+                                <i class="fas fa-trash-alt"></i>
+                                Clear Cart
+                            </button>
+                        </div>
+
+                        <div class="trust-badges">
+                            <div class="badge-item">
+                                <i class="fas fa-lock"></i>
+                                <span>Secure Payment</span>
+                            </div>
+                            <div class="badge-item">
+                                <i class="fas fa-shield-alt"></i>
+                                <span>Buyer Protection</span>
+                            </div>
+                            <div class="badge-item">
+                                <i class="fas fa-truck"></i>
+                                <span>Free Shipping</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Promo Code -->
+                    <div class="promo-card">
+                        <h3 class="promo-title">Have a promo code?</h3>
+                        <div class="promo-form">
+                            <input type="text" class="form-input" placeholder="Enter code" id="promoCode">
+                            <button class="btn btn-outline" id="applyPromoBtn">Apply</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {{else}}
+            <div class="empty-cart">
+                <i class="fas fa-shopping-cart"></i>
+                <h2>Your Cart is Empty</h2>
+                <p>Looks like you haven't added anything to your cart yet.</p>
+                <a href="/" class="btn btn-primary btn-lg">
+                    <i class="fas fa-shopping-bag"></i>
+                    Start Shopping
+                </a>
+            </div>
+            {{/if}}
+        {{else}}
+        <div class="loading-state">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Loading your cart...</p>
+        </div>
+        {{/if}}
+    </div>
+</main>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Update quantity
+    document.querySelectorAll('.increase-qty, .decrease-qty').forEach(btn => {
+        btn.addEventListener('click', async function() {
+            const sku = this.dataset.sku;
+            const input = document.querySelector(`.qty-input[data-sku="${sku}"]`);
+            const currentQty = parseInt(input.value);
+            const isIncrease = this.classList.contains('increase-qty');
+            const newQty = isIncrease ? currentQty + 1 : Math.max(1, currentQty - 1);
+
+            if (newQty === currentQty) return;
+
+            try {
+                const response = await fetch(`/api/v1/cart/item/${sku}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ qty: newQty })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    // Reload page to update totals
+                    window.location.reload();
+                } else {
+                    showNotification(data.message || 'Failed to update quantity', 'error');
+                }
+            } catch (error) {
+                console.error('Update quantity error:', error);
+                showNotification('An error occurred. Please try again.', 'error');
+            }
+        });
+    });
+
+    // Remove item
+    document.querySelectorAll('.btn-remove').forEach(btn => {
+        btn.addEventListener('click', async function() {
+            if (!confirm('Are you sure you want to remove this item?')) return;
+
+            const sku = this.dataset.sku;
+            const cartItem = this.closest('.cart-item');
+
+            try {
+                const response = await fetch(`/api/v1/cart/${sku}`, {
+                    method: 'DELETE',
+                    credentials: 'include'
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    cartItem.style.opacity = '0';
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 300);
+                    showNotification('Item removed from cart', 'success');
+                } else {
+                    showNotification(data.message || 'Failed to remove item', 'error');
+                }
+            } catch (error) {
+                console.error('Remove item error:', error);
+                showNotification('An error occurred. Please try again.', 'error');
+            }
+        });
+    });
+
+    // Clear cart
+    document.getElementById('clearCartBtn')?.addEventListener('click', async function() {
+        if (!confirm('Are you sure you want to clear your entire cart?')) return;
+
+        try {
+            const response = await fetch('/api/v1/cart', {
+                method: 'DELETE',
+                credentials: 'include'
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.success) {
+                showNotification('Cart cleared successfully', 'success');
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
+            } else {
+                showNotification(data.message || 'Failed to clear cart', 'error');
+            }
+        } catch (error) {
+            console.error('Clear cart error:', error);
+            showNotification('An error occurred. Please try again.', 'error');
+        }
+    });
+
+    // Checkout (placeholder)
+    document.getElementById('checkoutBtn')?.addEventListener('click', function() {
+        showNotification('Checkout feature coming soon!', 'info');
+    });
+
+    // Apply promo code (placeholder)
+    document.getElementById('applyPromoBtn')?.addEventListener('click', function() {
+        const code = document.getElementById('promoCode').value.trim();
+        if (!code) {
+            showNotification('Please enter a promo code', 'error');
+            return;
+        }
+        showNotification('Promo code feature coming soon!', 'info');
+    });
+
+    function showNotification(message, type = 'success') {
+        const notification = document.createElement('div');
+        notification.className = `notification notification-${type}`;
+        notification.innerHTML = `
+            <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+            <span>${message}</span>
+        `;
+        document.body.appendChild(notification);
+        
+        setTimeout(() => notification.classList.add('show'), 10);
+        setTimeout(() => {
+            notification.classList.remove('show');
+            setTimeout(() => notification.remove(), 300);
+        }, 3000);
+    }
+});
+</script>
+
+{{> footer}}
+

@@ -1,0 +1,305 @@
+// Navbar Component Styles
+
+.navbar {
+    background: $bg-primary;
+    box-shadow: $shadow-sm;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+
+    .container {
+        padding-top: 0;
+        padding-bottom: 0;
+    }
+}
+
+.navbar-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    height: 70px;
+}
+
+.navbar-brand {
+    .logo {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: $primary-color;
+        text-decoration: none;
+
+        i {
+            font-size: 1.75rem;
+        }
+
+        &:hover {
+            color: $primary-dark;
+        }
+    }
+}
+
+.navbar-search {
+    flex: 1;
+    max-width: 600px;
+    display: none;
+
+    @include respond-to('md') {
+        display: block;
+    }
+
+    .search-form {
+        display: flex;
+        position: relative;
+    }
+
+    .search-input {
+        flex: 1;
+        padding: 0.625rem 3rem 0.625rem 1rem;
+        border: 1px solid $border-color;
+        border-radius: $border-radius-lg;
+        font-size: 0.875rem;
+        transition: $transition-fast;
+
+        &:focus {
+            border-color: $primary-color;
+            box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+        }
+    }
+
+    .search-btn {
+        position: absolute;
+        right: 0.5rem;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: $text-secondary;
+        padding: 0.5rem;
+        cursor: pointer;
+
+        &:hover {
+            color: $primary-color;
+        }
+    }
+}
+
+.navbar-actions {
+    display: none;
+    align-items: center;
+    gap: 1rem;
+
+    @include respond-to('md') {
+        display: flex;
+    }
+}
+
+.nav-link {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    color: $text-primary;
+    text-decoration: none;
+    border-radius: $border-radius;
+    transition: $transition-fast;
+
+    &:hover {
+        background: $bg-secondary;
+        color: $primary-color;
+    }
+
+    &.cart-link {
+        padding: 0.5rem;
+
+        i {
+            font-size: 1.25rem;
+        }
+    }
+}
+
+.cart-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    @include flex-center;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 0.25rem;
+    background: $error-color;
+    color: $text-white;
+    font-size: 0.688rem;
+    font-weight: 600;
+    border-radius: 9px;
+    display: none;
+}
+
+.dropdown {
+    position: relative;
+
+    .dropdown-toggle {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 0.75rem;
+        background: none;
+        border: 1px solid $border-color;
+        border-radius: $border-radius;
+        color: $text-primary;
+        cursor: pointer;
+        transition: $transition-fast;
+
+        &:hover {
+            border-color: $primary-color;
+            color: $primary-color;
+        }
+
+        .user-email {
+            max-width: 150px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-size: 0.875rem;
+        }
+
+        i:last-child {
+            font-size: 0.75rem;
+        }
+    }
+
+    .dropdown-menu {
+        position: absolute;
+        top: calc(100% + 0.5rem);
+        right: 0;
+        min-width: 200px;
+        background: $bg-primary;
+        border: 1px solid $border-color;
+        border-radius: $border-radius;
+        box-shadow: $shadow-lg;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-10px);
+        transition: $transition;
+        z-index: 100;
+
+        &.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+    }
+
+    .dropdown-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem 1rem;
+        color: $text-primary;
+        text-decoration: none;
+        transition: $transition-fast;
+
+        &:hover {
+            background: $bg-secondary;
+            color: $primary-color;
+        }
+
+        &:first-child {
+            border-radius: $border-radius $border-radius 0 0;
+        }
+
+        &:last-child {
+            border-radius: 0 0 $border-radius $border-radius;
+        }
+
+        i {
+            width: 1.25rem;
+            text-align: center;
+        }
+    }
+}
+
+.mobile-menu-toggle {
+    display: flex;
+    padding: 0.5rem;
+    background: none;
+    border: none;
+    color: $text-primary;
+    font-size: 1.25rem;
+    cursor: pointer;
+
+    @include respond-to('md') {
+        display: none;
+    }
+
+    &:hover {
+        color: $primary-color;
+    }
+}
+
+.mobile-menu {
+    display: none;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1rem 0;
+    border-top: 1px solid $border-color;
+
+    &.active {
+        display: flex;
+    }
+
+    @include respond-to('md') {
+        display: none !important;
+    }
+}
+
+.mobile-search {
+    margin-bottom: 0.5rem;
+
+    .search-form {
+        display: flex;
+        position: relative;
+    }
+
+    .search-input {
+        flex: 1;
+        padding: 0.625rem 3rem 0.625rem 1rem;
+        border: 1px solid $border-color;
+        border-radius: $border-radius;
+        font-size: 0.875rem;
+    }
+
+    .search-btn {
+        position: absolute;
+        right: 0.5rem;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: $text-secondary;
+        padding: 0.5rem;
+    }
+}
+
+.mobile-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    color: $text-primary;
+    text-decoration: none;
+    border-radius: $border-radius;
+    transition: $transition-fast;
+
+    &:hover {
+        background: $bg-secondary;
+        color: $primary-color;
+    }
+
+    i {
+        width: 1.25rem;
+        text-align: center;
+    }
+}
